@@ -4,10 +4,10 @@ const REPLACEMENTS: [(&str, &str); 9] = [("one", "1"), ("two", "2"), ("three", "
 const REPLACEMENTS_REVERSED: [(&str, &str); 9] = [("eno", "1"), ("owt", "2"), ("eerht", "3"), ("ruof", "4"), ("evif", "5"), ("xis", "6"), ("neves", "7"), ("thgie", "8"), ("enin", "9"), ];
 
 fn main() {
-    // part_one();
+    part_one();
     part_two();
+    // tests();
 }
-
 
 fn part_one() {
     let lines = include_str!("../input.txt")
@@ -28,13 +28,16 @@ fn part_two() {
     println!("Part 2: {:?}", sum);
 }
 
-// TODO : this can probably be significantly cleaned up and turned into a pure function
 fn get_calibration_values(raw_text: &str) -> Vec<u32> {
      raw_text
         .lines()
         .map(|line| {
             let better_line: String = line.to_string(); // idk man
+
+            // Get first number starting from the left
             let first_number = get_first_number(&better_line, REPLACEMENTS);
+
+            // Get first number starting from the right
             let reversed = better_line.chars().rev().collect();
             let last_number = get_first_number(&reversed, REPLACEMENTS_REVERSED);
 
@@ -55,7 +58,7 @@ fn get_first_number(line: &String, replacements: [(&str, &str); 9]) -> u32 {
         return line
             .chars()
             .nth(first_digit_index.unwrap())
-            .map(|c| c as u32)
+            .map(|c| c.to_digit(10).unwrap())
             .unwrap();
     }
 
@@ -121,4 +124,30 @@ fn sum_lines(lines: Vec<&str>) -> u32 {
             return digits[0] * 10 + digits[digits.len() - 1];
         })
         .sum()
+}
+
+fn tests() {
+    run_test(&String::from("1twothree9"), 19);
+    run_test(&String::from("two19three"), 23);
+    run_test(&String::from("1two9three"), 13);
+    run_test(&String::from("two1three9"), 29);
+    run_test(&String::from("eightwo"), 82);
+    run_test(&String::from("eight"), 88);
+    run_test(&String::from("1"), 11);
+    run_test(&String::from("12837462387462348"), 18);
+    run_test(&String::from("eightsixsevenfivethreenine"), 89);
+    run_test(&String::from("iuhwefuywefuywgef"), 0);
+    run_test(&String::from(""), 0);
+}
+
+fn run_test(line: &String, expected_value: u32) {
+    let first_number = get_first_number(&line, REPLACEMENTS);
+    let last_number = get_first_number(&line.chars().rev().collect(), REPLACEMENTS_REVERSED);
+    let sum = first_number * 10 + last_number;
+
+    if sum != expected_value {
+        println!("FAIL - {} - Expected: {}, Actual: {}", line, expected_value, sum);
+    } else {
+        println!("PASS - {}", line);
+    }
 }
