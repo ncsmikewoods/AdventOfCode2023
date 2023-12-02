@@ -21,7 +21,6 @@ fn part_one() {
 
 fn part_two() {
     let raw = include_str!("../input.txt");
-    println!("Before replacements: {:?}", raw);
 
     let calibration_values = get_calibration_values(raw);
 
@@ -31,27 +30,16 @@ fn part_two() {
 
 // TODO : this can probably be significantly cleaned up and turned into a pure function
 fn get_calibration_values(raw_text: &str) -> Vec<u32> {
-    let mut lines: Vec<String> = raw_text
+     raw_text
         .lines()
-        .map(|line| line.to_string())
-        .collect();
+        .map(|line| {
+            let better_line: String = line.to_string(); // idk man
+            let first_number = get_first_number(&better_line, REPLACEMENTS);
+            let reversed = better_line.chars().rev().collect();
+            let last_number = get_first_number(&reversed, REPLACEMENTS_REVERSED);
 
-    let mut calibration_values: Vec<u32> = Vec::new();
-    for (i, _line) in lines.clone().into_iter().enumerate() {
-        // println!();
-        // println!("Line: {}", lines[i]);
-
-        let first_number = get_first_number(&lines[i], REPLACEMENTS);
-        let last_number = get_first_number(&lines[i].chars().rev().collect(), REPLACEMENTS_REVERSED);
-
-        // println!("first_number: {}", first_number);
-        // println!("last_number: {}", last_number);
-
-        let sum = first_number * 10 + last_number;
-        // println!("sum: {}", sum);
-        calibration_values.push(sum);
-    }
-    return calibration_values;
+            first_number * 10 + last_number
+        }).collect()
 }
 
 fn get_first_number(line: &String, replacements: [(&str, &str); 9]) -> u32 {
@@ -61,7 +49,7 @@ fn get_first_number(line: &String, replacements: [(&str, &str); 9]) -> u32 {
     // Case: There is neither a digit or a word in this line
     if first_digit_index.is_none() && first_word_index.is_none() { return 0; }
 
-    // Case: There's only digits
+    // Case: There are only digits
     if first_word_index.is_none() {
 
         return line
@@ -71,7 +59,7 @@ fn get_first_number(line: &String, replacements: [(&str, &str); 9]) -> u32 {
             .unwrap();
     }
 
-    // Case: There's only text words
+    // Case: There are only text words
     if first_digit_index.is_none() {
         return first_word_index.unwrap().1;
     }
