@@ -4,7 +4,7 @@ fn main() {
 }
 
 fn part_one() {
-    let lines = include_str!("../input_short.txt").lines();
+    let lines = include_str!("../input.txt").lines();
 
     let games: Vec<Game> =
         lines
@@ -13,7 +13,7 @@ fn part_one() {
 
     let valid_games_sum: u32 =
         games.iter()
-            .filter(|game| game.is_valid(12, 13, 14))
+            .filter(|game| game.is_valid(12, 14, 13))
             .map(|game| {
                 println!("Valid game: {}", game.id);
                 game.id
