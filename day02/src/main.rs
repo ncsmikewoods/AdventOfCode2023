@@ -1,5 +1,6 @@
 fn main() {
     part_one();
+    part_two();
     // run_tests();
 }
 
@@ -15,12 +16,28 @@ fn part_one() {
         games.iter()
             .filter(|game| game.is_valid(12, 14, 13))
             .map(|game| {
-                println!("Valid game: {}", game.id);
+                // println!("Valid game: {}", game.id);
                 game.id
             })
             .sum();
 
     println!("Valid game sum: {}", valid_games_sum);
+}
+
+fn part_two() {
+    let lines = include_str!("../input.txt").lines();
+
+    let games: Vec<Game> =
+        lines
+            .map(|line| Game::from_line(line))
+            .collect();
+
+    let game_power_sum: u32 =
+        games.iter()
+            .map(|game| game.get_power())
+            .sum();
+
+    println!("Game power sum: {}", game_power_sum);
 }
 
 struct Game {
@@ -52,6 +69,31 @@ impl Game {
                 .collect();
 
         Game { id: game_id, reveals}
+    }
+
+    fn get_power(&self) -> u32 {
+        let max_red =
+            &self.reveals
+                .iter()
+                .max_by_key(|reveal| reveal.reds)
+                .unwrap()
+                .reds;
+
+        let max_blue =
+            &self.reveals
+                .iter()
+                .max_by_key(|reveal| reveal.blues)
+                .unwrap()
+                .blues;
+
+        let max_green =
+            &self.reveals
+                .iter()
+                .max_by_key(|reveal| reveal.greens)
+                .unwrap()
+                .greens;
+
+        return max_red * max_blue * max_green;
     }
 
     fn display(&self) {
@@ -158,10 +200,8 @@ fn test_game(game: &Game, expected: bool) {
     let actual = game.is_valid(12, 13, 14);
 
     if actual != expected {
-        // println!("FAIL - {} - Expected: {}, Actual: {}", reveal.get_display(), expected, actual);
         println!("FAIL");
     } else {
         println!("PASS");
-        // println!("PASS - {}", reveal.get_display());
     }
 }
