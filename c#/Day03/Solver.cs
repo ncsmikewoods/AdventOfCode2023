@@ -20,9 +20,16 @@ public class Solver
         return partNumbers.Sum();
     }
     
-    public int Solve2()
+    public double Solve2()
     {
-        return 1;
+        var gearRatios = _schematic.GetGearRatios();
+
+        // foreach (var gearRatio in gearRatios)
+        // {
+        //     Console.WriteLine($"Gear Ratio: {gearRatio}");
+        // }
+
+        return gearRatios.Sum();
     }
 
     void GetInputs()
@@ -30,5 +37,6 @@ public class Solver
         var lines = File.ReadAllLines("input.txt").ToList();
         var grid = lines.Select(l => l.ToList()).ToList();
         _schematic = new Schematic(grid);
+        _schematic.CalculateLabelAdjacency();
     }
 }
