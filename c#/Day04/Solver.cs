@@ -11,19 +11,28 @@ public class Solver
 
     public int Solve1()
     {
-        var scores = _cards.Select(card => card.CalculateScore()).ToList();
+        var winnerCounts = _cards.Select(card => card.CountWinners()).ToList();
 
-        foreach (var score in scores)
-        {
-            Console.WriteLine($"Score - {score}");
-        }
-
-        return scores.Sum();
+        return winnerCounts
+            .Select(x => (int)Math.Pow(2, x - 1))
+            .Sum();
     }
     
     public int Solve2()
     {
-        return 1;
+        for (var i = 0; i < _cards.Count; i++)
+        {
+            var winnerCount = _cards[i].CountWinners();
+            foreach (var j in Enumerable.Range(i+1, winnerCount))
+            {
+                _cards[j].Multiplier += _cards[i].Multiplier;
+            }
+        }
+        
+        return 
+            _cards
+                .Select(c => c.Multiplier)
+                .Sum();
     }
 
     void GetInputs()
